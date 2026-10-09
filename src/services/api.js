@@ -1,0 +1,17 @@
+import axios from'axios';
+const api=axios.create({baseURL:'http://localhost:8080/api',headers:{'Content-Type':'application/json'}});
+api.interceptors.request.use(config=>{try{const user=JSON.parse(localStorage.getItem('attendanceUser')||'null');if(user?.token)config.headers.Authorization=`Bearer ${user.token}`}catch{}return config});
+export const login=data=>api.post('/auth/login',data).then(r=>r.data);
+export const getStudents=()=>api.get('/students').then(r=>r.data),addStudent=d=>api.post('/students',d).then(r=>r.data),updateStudent=(id,d)=>api.put(`/students/${id}`,d).then(r=>r.data),deleteStudent=id=>api.delete(`/students/${id}`);
+export const getFaculty=()=>api.get('/faculty').then(r=>r.data),addFaculty=d=>api.post('/faculty',d).then(r=>r.data),updateFaculty=(id,d)=>api.put(`/faculty/${id}`,d).then(r=>r.data),deleteFaculty=id=>api.delete(`/faculty/${id}`);
+export const getSubjects=()=>api.get('/subjects').then(r=>r.data),addSubject=d=>api.post('/subjects',d).then(r=>r.data),updateSubject=(id,d)=>api.put(`/subjects/${id}`,d).then(r=>r.data),deleteSubject=id=>api.delete(`/subjects/${id}`);
+export const getAttendance=()=>api.get('/attendance').then(r=>r.data),markAttendance=d=>api.post('/attendance',d).then(r=>r.data),updateAttendance=(id,d)=>api.put(`/attendance/${id}`,d).then(r=>r.data),deleteAttendance=id=>api.delete(`/attendance/${id}`),getStudentAttendance=id=>api.get(`/attendance/student/${encodeURIComponent(id)}`).then(r=>r.data),getAttendancePercentage=id=>api.get(`/attendance/percentage/${encodeURIComponent(id)}`).then(r=>r.data);
+export const importAttendance=rows=>api.post('/attendance/import',rows).then(r=>r.data);
+export const deleteDemoAttendance=()=>api.delete('/attendance/demo').then(r=>r.data);
+export const getSchedules=()=>api.get('/schedules').then(r=>r.data),addSchedule=d=>api.post('/schedules',d).then(r=>r.data),updateSchedule=(id,d)=>api.put(`/schedules/${id}`,d).then(r=>r.data),deleteSchedule=id=>api.delete(`/schedules/${id}`);
+export const getAttendanceInsights=studentCode=>api.get(`/attendance/student/${encodeURIComponent(studentCode)}/insights`).then(r=>r.data);
+export const getAttendanceAudit=()=>api.get('/attendance/audit').then(r=>r.data);
+export const getFacultyOverview=()=>api.get('/faculty/overview').then(r=>r.data);
+export const createAttendanceSession=data=>api.post('/attendance/sessions',data).then(r=>r.data);
+export const checkInWithQr=(token,username)=>api.post(`/attendance/sessions/${encodeURIComponent(token)}/checkins`,{username}).then(r=>r.data);
+export default api;
